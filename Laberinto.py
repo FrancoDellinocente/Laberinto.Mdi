@@ -15,17 +15,24 @@ class Pared (pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
 
 def construir_mapa(mapa):
-    listaMuros=[]
+    listaMuros = []
     x=0
     y=0
     for fila in mapa:
         for muro in fila:
             if muro == "X":
-                listaMuros.appemd(pygame.Rect(x,y,80,80))
+                listaMuros.append(pygame.Rect(x,y,80,80))
             x+=80
         x=0
         y+=80
     return listaMuros
+
+def dibujar_muro(superficie, rectangulo):
+    pygame.draw.rect(superficie, GREEN, rectangulo)
+
+def dibujar_mapa (superficie, listaMuros):
+    for muro in listaMuros:
+        dibujar_muro(superficie, muro)
 
 WIDTH = 1280
 HEIGHT = 720
@@ -36,6 +43,7 @@ vel=0
 alt=0
 
 BLACK = (0, 0, 0)
+GREEN = (0,255,0)
 
 #Creo la ventana
 ventana = pygame.display.set_mode((WIDTH, HEIGHT))
@@ -49,7 +57,7 @@ listaPared.add(pared)
 
 listaPer = pygame.sprite.Group()
 per = Per()
-listaPer (per)
+listaPer.add(per)
 
 #Dibujo como va a ser el mapa
 mapa = [
@@ -112,13 +120,15 @@ while not gameOver:
     y=0
     for fila in mapa:
         for muro in fila:
-            pared.rect.x=x
-            pared.rect.y=y
-            listaPared.add(pared)
-            listaPared.drawn(ventana)
-        x+=80
-    x=0
-    y+=80
-    listaPer.drawn(ventana)
+            if muro=="X":
+                pared.rect.x=x
+                pared.rect.y=y
+                listaPared.add(pared)
+                listaPared.draw(ventana)
+            x+=80
+        x=0
+        y+=80
+    listaPer.draw(ventana)
+    dibujar_mapa(ventana, listaMuros)
     pygame.display.flip()
 pygame.quit()
