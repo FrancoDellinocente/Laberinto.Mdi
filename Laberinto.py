@@ -5,13 +5,13 @@ pygame.init()
 class Per (pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Assets/perso.png").convert_alpha()
+        self.image = pygame.image.load("Assets/perso1.png").convert_alpha()
         self.rect = self.image.get_rect()
 
 class Pared (pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Assets/muro.jpg").convert_alpha()
+        self.image = pygame.image.load("Assets/muro1.png").convert_alpha()
         self.rect = self.image.get_rect()
 
 def construir_mapa(mapa):
@@ -21,10 +21,10 @@ def construir_mapa(mapa):
     for fila in mapa:
         for muro in fila:
             if muro == "X":
-                listaMuros.append(pygame.Rect(x,y,80,80))
-            x+=80
+                listaMuros.append(pygame.Rect(x,y,20,20))
+            x+=20
         x=0
-        y+=80
+        y+=20
     return listaMuros
 
 def dibujar_muro(superficie, rectangulo):
@@ -34,7 +34,7 @@ def dibujar_mapa (superficie, listaMuros):
     for muro in listaMuros:
         dibujar_muro(superficie, muro)
 
-WIDTH = 1280
+WIDTH =  1280
 HEIGHT = 720
 movimiento = pygame.Rect(600,400,40,40)
 x=0
@@ -125,9 +125,9 @@ while not gameOver:
                 pared.rect.y=y
                 listaPared.add(pared)
                 listaPared.draw(ventana)
-            x+=80
+            x+=20
         x=0
-        y+=80
+        y+=20
     listaPer.draw(ventana)
     dibujar_mapa(ventana, listaMuros)
     pygame.display.flip()
