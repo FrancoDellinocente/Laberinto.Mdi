@@ -5,13 +5,13 @@ pygame.init()
 class Per (pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Assets/perso1.png").convert_alpha()
+        self.image = pygame.image.load("Assets/perso2.png").convert_alpha()
         self.rect = self.image.get_rect()
 
 class Pared (pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
-        self.image = pygame.image.load("Assets/muro1.png").convert_alpha()
+        self.image = pygame.image.load("Assets/muro2.png").convert_alpha()
         self.rect = self.image.get_rect()
 
 def construir_mapa(mapa):
@@ -21,10 +21,10 @@ def construir_mapa(mapa):
     for fila in mapa:
         for muro in fila:
             if muro == "X":
-                listaMuros.append(pygame.Rect(x,y,20,20))
-            x+=20
+                listaMuros.append(pygame.Rect(x,y,22,17))
+            x+=22
         x=0
-        y+=20
+        y+=17
     return listaMuros
 
 def dibujar_muro(superficie, rectangulo):
@@ -34,9 +34,10 @@ def dibujar_mapa (superficie, listaMuros):
     for muro in listaMuros:
         dibujar_muro(superficie, muro)
 
-WIDTH =  1280
-HEIGHT = 720
-movimiento = pygame.Rect(600,400,40,40)
+WIDTH = 748
+HEIGHT = 578
+#para ubicarlo en eje de las x hay que multiplicar por 17 yen el eje de las y por 22 por la cantidad de espacios que se lo desea mover
+movimiento = pygame.Rect(90,550,10,10)
 x=0
 y=0
 vel=0
@@ -61,20 +62,40 @@ listaPer.add(per)
 
 #Dibujo como va a ser el mapa
 mapa = [
-"XXXXXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXXX  XXXXX    XXXXX     ",
-"XXXXXX   XXXXXXX   XX   XXX",
-"XXX       XXXXXXX      XXXX",
-"XXXXXXXXX  XXXXXXXXX  XXXXX",
-"XXXXXXXXXX  XXXXXXXX  XXXXX",
-"X                       XXX",
-"XXX  XXXXXXXXXXXXXXXXXXXXXX",
-"XXXX  XXXXX         XXXXXXX",
-"XXXXX        XXXXX  XX  XXX",
-"XXXXXXXXXXXXXXXXXX  XXXXXXX",
-"XXXX  XXXXX  XXXX  XXXXXXXX",
-"                        XXX",
-"XXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXX                            X",
+"XXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXX      X                     X",
+"XXXXXXXXXX XXXXXXXXXXXXXXXX XXXX X",
+"XXXXXXXXXX      XXX     XXX XXXX X",
+"XXXXXXX    XXXX     XXX     XXX  X",
+"XXXXXXX XXXXXXXXXXXXXXXXXXXXXXXX X",
+"XXXXXXX                          X",
+"XXXXXXX XXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXX     XXXXXXXX                XX",
+"XXX XXXXXXXXXXXX XXXXXXXXXXXXXX XX",
+"XXX X            XXXXXXXXXXXXXX XX",
+"XXX XXXXXXXXXXXX XXXX        XX XX",
+"XXX XXXX    XXXX XXXX XXXXXX XX XX",
+"XXX XXXX XX XXXX XXXX XXXXXX XX XX",
+"XXX XX   XX XXXX XXXX XXXXXX XX XX",
+"XXX XXXXXXX XXXX XXXX   XXXX XX XX",
+"XXX XXX          XXXXXX XXXX    XX",
+"XXX XXXXX XXXXXX XXXXXX XXXXXXXXXX",
+"XXX XXXXX XXXXXX XXX        XXXXXX",
+"XXX X     XXXXXX XXXXXXXXXX XXXXXX",
+"XXX XXXXX XXXXX          XX  XXXXX",
+"XXX XXXXX XXXXXXXXXXXXXX XX      X",
+"XXX XXXXX             XX XXXXXXX X",
+"XXX XXXXXXXXXXXXXX XXXXX XX      X",
+"XXX                XXXXX XX XXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXX XX     XX",
+"XXXX             XXXXXXX XXXXXX XX",
+"XXXX XXX  XXXXXX XXXXXXX      X XX",
+"XXXX XXXX XXXXXX         XXXXXX XX",
+"XXXX XXXX XXXXXXXXXXXXXXXXXXX   XX",
+"XXXX XXXX                      XXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
 listaMuros = construir_mapa(mapa)
@@ -82,6 +103,7 @@ listaMuros = construir_mapa(mapa)
 #comienza el bucle del juego
 gameOver=False
 while not gameOver:
+
     reloj.tick(60)
 
     for event in pygame.event.get():
@@ -90,13 +112,13 @@ while not gameOver:
 
         if event.type== pygame.KEYDOWN:
             if event.key==pygame.K_LEFT:
-                vel=-5
+                vel=-3
             elif event.key==pygame.K_RIGHT:
-                vel=+5
+                vel=+3
             elif event.key==pygame.K_UP:
-                alt=-5
+                alt=-3
             elif event.key==pygame.K_DOWN:
-                alt=+5
+                alt=+3
         else:
             vel=0
             alt=0
@@ -125,10 +147,21 @@ while not gameOver:
                 pared.rect.y=y
                 listaPared.add(pared)
                 listaPared.draw(ventana)
-            x+=20
+            x+=22
         x=0
-        y+=20
+        y+=17
+
+    
+    if per.rect.y < 540:
+        per.rect.y = 550
+
+
+
     listaPer.draw(ventana)
-    dibujar_mapa(ventana, listaMuros)
+    #dibujar_mapa(ventana, listaMuros)
     pygame.display.flip()
+
+    #pygame.mixer.music.load("music.mp3")
+    #pygame.mixer.music.play(-1)
+
 pygame.quit()
