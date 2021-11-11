@@ -151,9 +151,9 @@ while not gameOver:
         x=0
         y+=17
 
-    
-    if per.rect.y < 540:
-        per.rect.y = 550
+    #aqui es cuando pasara de nivel en nivel
+    #if per.rect.y < 540:
+    #    per.rect.y = 550
 
 
 
@@ -161,6 +161,7 @@ while not gameOver:
     #dibujar_mapa(ventana, listaMuros)
     pygame.display.flip()
 
+    #no funciona todavia
     #pygame.mixer.music.load("music.mp3")
     #pygame.mixer.music.play(-1)
 
