@@ -1,4 +1,5 @@
 import pygame
+from pygame import surface
 
 pygame.init()
 
@@ -12,6 +13,12 @@ class Pared (pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
         self.image = pygame.image.load("Assets/muro2.png").convert_alpha()
+        self.rect = self.image.get_rect()
+
+class Piso (pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.image.load("Assets/piso.png").convert_alpha()
         self.rect = self.image.get_rect()
 
 def construir_mapa(mapa):
@@ -56,6 +63,10 @@ listaPared = pygame.sprite.Group()
 pared= Pared()
 listaPared.add(pared)
 
+listaPiso = pygame.sprite.Group()
+piso= Piso()
+listaPiso.add(piso)
+
 listaPer = pygame.sprite.Group()
 per = Per()
 listaPer.add(per)
@@ -63,7 +74,118 @@ listaPer.add(per)
 #Dibujo como va a ser el mapa
 mapa = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXX                            X",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXX                              ",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+]
+
+mapa3 = [
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXX             X       XX  X    ",
+"XXXX XXXXXXXXXX XX XXXXX XX XX XXX",
+"XXXX XXXXXXXXXX    XXXXX    XX XXX",
+"XXXX XXXXXXXXXXXXXXXXXXXXXXXXX XXX",
+"XX             XX              XXX",
+"XX XXXXXXXXXXX XX XXXXXXXXXXXXXXXX",
+"XX  XX     XXX XX XXXXXXXXXXXXXXXX",
+"XXX    XXX XXX    XX           XXX",
+"XXXXXXXXXX XXXXXXXXX XXXXXXXXX XXX",
+"XXXXX                XX    XXX XXX",
+"XXXXXXXXXXXXXXXXXXXXXXX XX XXX XXX",
+"XXXXX             XXXXX XX     XXX",
+"XXXXX XXXXXXXXXXX XXXXX XXXXXXXXXX",
+"XXXXX XXX         XXXXX XXXXXXX XX",
+"XXXXX XX   XXXXXXXXXXXX XXXXXXX XX",
+"XXXXX XX XXXXXXXXXXXXXX XXXXXXX XX",
+"XXXXX XX                 XXXXXX XX",
+"XXXXX XXXXXXXXXXXXXXXXXXXXXXXXX XX",
+"XXX                             XX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX XX",
+"XXXXXXX      XXX       XXX      XX",
+"XXXXXXX XXXX XXX XXXXX XXX XXXX XX",
+"XXXXXXX XXXX     XXXXX     XXXX XX",
+"XXXXXXX XXXXXXXXXXXXXXXXXXXXXXX XX",
+"XXXXX                           XX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX XX",
+"XXXX                       XXXX XX",
+"XXXX XXXXXXXXXXXXXXXXXXXXX XXXX XX",
+"XXXX XX                XXX XXXX XX",
+"XXXX     XXXXXXXXXXXXX XXX XXXX XX",
+"XXXXXXXXXXXXXXXXXXXXXX XXX      XX",
+"XXXX                     XXXXXXXXX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+]
+
+mapa1 = [
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XX                                ",
+"XX XXXXXXXXXXXXXXXXXXXXXXXXXX XXXX",
+"XX XXXXXXXXXX            XXX     X",
+"XX XXXXXXXXXX XXXXXXXXXX XXXXXXX X",
+"XX XXX   XXXX X        X      XX X",
+"XX     X XXX      XXXX XXXXXX XX X",
+"XXXXXXXX XXXXXXXXXXX       XX XX X",
+"XXXXX                 XXXX XX XX X",
+"XXXXXXXXXXXXXXXXXXXXXXXXXX XX XX X",
+"XXXX                       XX XX X",
+"XXXX XXXXXXXXXXXXXXXXXXXXXXXX    X",
+"XXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XX                            XXXX",
+"XXXXXXXXXXXXXXXXXXXX XXXXXXXX XXXX",
+"XXXXXXXXXX   XXXX    XXXXXXXX XXXX",
+"XXX        X XXXX XXXXXXXXXXX XXXX",
+"XXXXX XXXX X XX    XXX        XXXX",
+"XXXXX XXX  X  XXXX XXX XXXXXXX XXX",
+"XX    XXXX XX      XXX     XXX XXX",
+"XX XXXXX   XXXXXXXXXXXXXXX XXx XXX",
+"XX XXX                XXXX XXX XXX",
+"XX XXXXXXXXXXXXXXXXXX XXX  XXX XXX",
+"XXXX               XX XXX XXXX XXX",
+"XXXX XX XXXXXXX XXXXX XXX      XXX",
+"XXXX XX XXXXXXX       XXXXXXXX XXX",
+"XXXX XX XXXXXXXXXXXXXXXXXXXXXX XXX",
+"XXXX XX                        XXX",
+"XXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XX                              XX",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX XX",
+"XXXX                XXXXXXXXXXX XX",
+"XXXX XXXXXXXXXXXXXX              X",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+]
+
+mapa2 = [
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
+"XXXXX                             ",
 "XXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 "XXXXX      X                     X",
 "XXXXXXXXXX XXXXXXXXXXXXXXXX XXXX X",
@@ -98,13 +220,20 @@ mapa = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
-listaMuros = construir_mapa(mapa)
+nivel=0
 
 #comienza el bucle del juego
 gameOver=False
 while not gameOver:
 
     reloj.tick(60)
+
+    ventana.fill(BLACK)
+
+    #no funciona todavia
+    pygame.mixer.music.load("Assets/music.mp3")
+    pygame.mixer.music.play(-1)
+
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -129,40 +258,88 @@ while not gameOver:
     per.rect.x = movimiento.x
     per.rect.y = movimiento.y
 
-    #colision con los muros
-    for muro in listaMuros:
-        if movimiento.colliderect(muro):
-            movimiento.x -= vel
-            movimiento.y -= alt
-    
-    ventana.fill(BLACK)
 
-    #dibujo
-    x=0
-    y=0
-    for fila in mapa:
-        for muro in fila:
-            if muro=="X":
-                pared.rect.x=x
-                pared.rect.y=y
-                listaPared.add(pared)
-                listaPared.draw(ventana)
-            x+=22
+    if nivel == 0:
+
+        listaMuros = construir_mapa(mapa)
+
+        #colision con los muros
+        for muro in listaMuros:
+            if movimiento.colliderect(muro):
+                movimiento.x -= vel
+                movimiento.y -= alt
+
+        #dibujo
         x=0
-        y+=17
+        y=0
+        for fila in mapa:
+            for muro in fila:
+                if muro=="X":
+                    pared.rect.x=x
+                    pared.rect.y=y
+                    listaPared.add(pared)
+                    listaPared.draw(ventana)
+                else:
+                    pared.rect.x=x
+                    pared.rect.y=y
+                    listaPiso.add(piso)
+                    listaPiso.draw(ventana)
+                x+=22
+            x=0
+            y+=17
+
+        listaPer.draw(ventana)
+
+
+        if per.rect.x > 748:
+            nivel=1
 
     #aqui es cuando pasara de nivel en nivel
-    #if per.rect.y < 540:
-    #    per.rect.y = 550
+    if nivel == 1:
+        
+        """del listaMuros
+        del listaPared"""
+
+        listaMuros1 = construir_mapa(mapa1)
+
+        #colision con los muros
+        for muro in listaMuros1:
+            if movimiento.colliderect(muro):
+                movimiento.x -= vel
+                movimiento.y -= alt
+
+        """listaPared = pygame.sprite.Group()
+        pared= Pared()
+        listaPared.add(pared)"""
+
+        #dibujo
+        x=0
+        y=0
+        for fila in mapa1:
+            for muro in fila:
+                if muro=="X":
+                    pared.rect.x=x
+                    pared.rect.y=y
+                    listaPared.add(pared)
+                    listaPared.draw(ventana)
+                else:
+                    pared.rect.x=x
+                    pared.rect.y=y
+                    listaPiso.add(piso)
+                    listaPiso.draw(ventana)
+                x+=22
+            x=0
+            y+=17
+
+        """per.rect.x=90
+        per.rect.y=550"""
+        movimiento = pygame.Rect(90,550,10,10)
+        listaPer.draw(ventana)
 
 
 
-    listaPer.draw(ventana)
+    
     #dibujar_mapa(ventana, listaMuros)
     pygame.display.flip()
-
-    #no funciona todavia
-    #pygame.mixer.music.load("music.mp3")
-    #pygame.mixer.music.play(-1)
 
 pygame.quit()
