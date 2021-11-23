@@ -41,6 +41,28 @@ def dibujar_mapa (superficie, listaMuros):
     for muro in listaMuros:
         dibujar_muro(superficie, muro)
 
+def draw_text(surface, text, size, x, y):
+	font = pygame.font.SysFont("serif", size)
+	text_surface = font.render(text, True, (255, 255, 255))
+	text_rect = text_surface.get_rect()
+	text_rect.midtop = (x, y)
+	surface.blit(text_surface, text_rect)
+
+def PantallaFinal():
+	ventana.fill(BLACK)
+	draw_text(ventana, "GAME OVER", 65, WIDTH // 2, HEIGHT / 4)
+	draw_text(ventana, "Presiona cualquier tecla para salir", 17, WIDTH // 2, HEIGHT * 3/4)
+	pygame.display.flip()
+	waiting = True
+	while waiting:
+		reloj.tick(60)
+		for event in pygame.event.get():
+			if event.type == pygame.KEYDOWN:
+				pygame.quit()
+			if event.type == pygame.KEYUP:
+				waiting = False
+
+
 WIDTH = 748
 HEIGHT = 578
 #para ubicarlo en eje de las x hay que multiplicar por 17 yen el eje de las y por 22 por la cantidad de espacios que se lo desea mover
@@ -147,8 +169,8 @@ mapa3 = [
 ]
 
 mapa1 = [
-"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-"XX                                ",
+"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX X",
+"XX                               X",
 "XX XXXXXXXXXXXXXXXXXXXXXXXXXX XXXX",
 "XX XXXXXXXXXX            XXX     X",
 "XX XXXXXXXXXX XXXXXXXXXX XXXXXXX X",
@@ -185,7 +207,7 @@ mapa1 = [
 
 mapa2 = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
-"XXXXX                             ",
+"                                 X",
 "XXXXX XXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 "XXXXX      X                     X",
 "XXXXXXXXXX XXXXXXXXXXXXXXXX XXXX X",
@@ -221,19 +243,31 @@ mapa2 = [
 ]
 
 nivel=0
+posnormal=0
+
 
 #comienza el bucle del juego
 gameOver=False
+fin=False
 while not gameOver:
 
     reloj.tick(60)
 
     ventana.fill(BLACK)
 
+
     #no funciona todavia
+    pygame.mixer.init()
     pygame.mixer.music.load("Assets/music.mp3")
     pygame.mixer.music.play(-1)
 
+    #Pantalla de game over
+    if fin == True:
+        PantallaFinal()
+
+    if posnormal== 0:
+        movimiento = pygame.Rect(90,550,10,10)
+        posnormal=1
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -291,26 +325,21 @@ while not gameOver:
         listaPer.draw(ventana)
 
 
-        if per.rect.x > 748:
+        if per.rect.x > 748 and nivel == 0:
             nivel=1
+            posnormal=0
 
     #aqui es cuando pasara de nivel en nivel
+    
     if nivel == 1:
-        
-        """del listaMuros
-        del listaPared"""
 
-        listaMuros1 = construir_mapa(mapa1)
+        listaMuros = construir_mapa(mapa1)
 
         #colision con los muros
-        for muro in listaMuros1:
+        for muro in listaMuros:
             if movimiento.colliderect(muro):
                 movimiento.x -= vel
                 movimiento.y -= alt
-
-        """listaPared = pygame.sprite.Group()
-        pared= Pared()
-        listaPared.add(pared)"""
 
         #dibujo
         x=0
@@ -322,6 +351,7 @@ while not gameOver:
                     pared.rect.y=y
                     listaPared.add(pared)
                     listaPared.draw(ventana)
+                    
                 else:
                     pared.rect.x=x
                     pared.rect.y=y
@@ -331,10 +361,54 @@ while not gameOver:
             x=0
             y+=17
 
-        """per.rect.x=90
-        per.rect.y=550"""
-        movimiento = pygame.Rect(90,550,10,10)
+        
+
         listaPer.draw(ventana)
+
+        if nivel == 1 and per.rect.y < 0:
+            nivel=2
+            posnormal=0
+        
+
+
+
+    if nivel == 2:
+    
+        listaMuros = construir_mapa(mapa2)
+
+        #colision con los muros
+        for muro in listaMuros:
+            if movimiento.colliderect(muro):
+                movimiento.x -= vel
+                movimiento.y -= alt
+                
+        #dibujo
+        x=0
+        y=0
+        for fila in mapa2:
+            for muro in fila:
+                if muro=="X":
+                    pared.rect.x=x
+                    pared.rect.y=y
+                    listaPared.add(pared)
+                    listaPared.draw(ventana)
+                        
+                else:
+                    pared.rect.x=x
+                    pared.rect.y=y
+                    listaPiso.add(piso)
+                    listaPiso.draw(ventana)
+                x+=22
+            x=0
+            y+=17
+
+
+        listaPer.draw(ventana)
+
+        if nivel == 2 and per.rect.x < 0:
+            fin= True
+            #nivel=2
+            #posnormal=0
 
 
 
