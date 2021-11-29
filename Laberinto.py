@@ -48,9 +48,10 @@ def draw_text(surface, text, size, x, y):
 	text_rect.midtop = (x, y)
 	surface.blit(text_surface, text_rect)
 
+
 def PantallaFinal():
 	ventana.fill(BLACK)
-	draw_text(ventana, "GAME OVER", 65, WIDTH // 2, HEIGHT / 4)
+	draw_text(ventana, "GAME OVER", 65, WIDTH // 2, HEIGHT // 4)
 	draw_text(ventana, "Presiona cualquier tecla para salir", 17, WIDTH // 2, HEIGHT * 3/4)
 	pygame.display.flip()
 	waiting = True
@@ -242,9 +243,10 @@ mapa2 = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
-nivel=0
+score= 1000000
+nivel= -1
 posnormal=0
-
+waiting = True
 
 #comienza el bucle del juego
 gameOver=False
@@ -255,11 +257,25 @@ while not gameOver:
 
     ventana.fill(BLACK)
 
-
+    score= score-1
     #no funciona todavia
     pygame.mixer.init()
     pygame.mixer.music.load("Assets/music.mp3")
     pygame.mixer.music.play(-1)
+
+    if nivel == -1:
+        ventana.fill(BLACK)
+        draw_text(ventana, "Tza tun tzat", 65, WIDTH // 2, HEIGHT // 4)
+        draw_text(ventana, "Juego hecho por Franco Dellinocente", 27, WIDTH // 2, HEIGHT / 2)
+        draw_text(ventana, "Presiona cualquier tecla para comenzar", 17, WIDTH // 2, HEIGHT * 3/4)
+        pygame.display.flip()
+        while waiting:
+            reloj.tick(60)
+            for event in pygame.event.get():
+                if event.type == pygame.KEYDOWN:
+                    nivel=0
+                    waiting = False
+
 
     #Pantalla de game over
     if fin == True:
@@ -296,6 +312,7 @@ while not gameOver:
     if nivel == 0:
 
         listaMuros = construir_mapa(mapa)
+
 
         #colision con los muros
         for muro in listaMuros:
@@ -412,7 +429,7 @@ while not gameOver:
 
 
 
-    
+    draw_text(ventana, str(score), 25, WIDTH // 2, 10)
     #dibujar_mapa(ventana, listaMuros)
     pygame.display.flip()
 
