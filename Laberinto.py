@@ -3,6 +3,7 @@ from pygame import surface
 
 pygame.init()
 
+#clases para carga imagenes y tomar sus rectas que se utilizan en colisiones
 class Per (pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
@@ -21,6 +22,7 @@ class Piso (pygame.sprite.Sprite):
         self.image = pygame.image.load("Assets/piso.png").convert_alpha()
         self.rect = self.image.get_rect()
 
+#Recibe un mapa y lo va recorriendo y almacenando cordenadas de los muro
 def construir_mapa(mapa):
     listaMuros = []
     x=0
@@ -34,13 +36,18 @@ def construir_mapa(mapa):
         y+=17
     return listaMuros
 
+"""
+#Funciones que utilizaba cuando todavia no sabia cargar imagenes bien
+
 def dibujar_muro(superficie, rectangulo):
     pygame.draw.rect(superficie, GREEN, rectangulo)
 
 def dibujar_mapa (superficie, listaMuros):
     for muro in listaMuros:
         dibujar_muro(superficie, muro)
+"""
 
+#Funcion para escribir Texto
 def draw_text(surface, text, size, x, y):
 	font = pygame.font.SysFont("serif", size)
 	text_surface = font.render(text, True, (255, 255, 255))
@@ -50,10 +57,14 @@ def draw_text(surface, text, size, x, y):
 
 def PantallaFinal(puntuacion):
     ventana.fill(BLACK)
+
+    #Escribe los textos
     draw_text(ventana, "GAME OVER", 65, WIDTH // 2, HEIGHT // 4)
     draw_text(ventana, "Tu puntuacion fue: " + str(puntuacion), 30, WIDTH // 2, HEIGHT // 2)
     draw_text(ventana, "Presiona cualquier tecla para salir", 17, WIDTH // 2, HEIGHT * 3/4)
     pygame.display.flip()
+
+    #Bucle para esperar a que el jugador presione una tecla
     waiting = True
     while waiting:
         reloj.tick(60)
@@ -64,9 +75,10 @@ def PantallaFinal(puntuacion):
                 waiting = False
  
 
-
+#Defino alto y ancho de la ventana en pixeles
 WIDTH = 748
 HEIGHT = 578
+
 #para ubicarlo en eje de las x hay que multiplicar por 17 yen el eje de las y por 22 por la cantidad de espacios que se lo desea mover
 movimiento = pygame.Rect(90,550,10,10)
 x=0
@@ -74,15 +86,16 @@ y=0
 vel=0
 alt=0
 
+#Creo colores 
 BLACK = (0, 0, 0)
 GREEN = (0,255,0)
 
 #Creo la ventana
 ventana = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption('muro')
+pygame.display.set_caption('Tza tun tzat')
 reloj = pygame.time.Clock()
 
-#listas para dibujar despues
+#Listas para dibujar despues
 listaPared = pygame.sprite.Group()
 pared= Pared()
 listaPared.add(pared)
@@ -95,7 +108,7 @@ listaPer = pygame.sprite.Group()
 per = Per()
 listaPer.add(per)
 
-#Dibujo como va a ser el mapa
+#Mapas
 mapa3 = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -244,28 +257,31 @@ mapa2 = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
+#Carga control de volumen de la musica
+pygame.mixer.init()
+pygame.mixer.music.load("Assets/music.mp3")
+pygame.mixer.music.set_volume(0.3)
+pygame.mixer.music.play(-1)
+
+#variables que son necesarias iniciar antes que empiece el bucle del juego
 score= 1000000
 nivel= -1
 posnormal=0
 waiting = True
 scoreFinal = 0
 fondo= pygame.image.load("Assets/fondo.png").convert()
-
-#comienza el bucle del juego
 gameOver=False
 fin=False
+
+#comienza el bucle del juego
 while not gameOver:
 
     reloj.tick(60)
-
     ventana.fill(BLACK)
 
     score= score-1
-    #no funciona todavia
-    pygame.mixer.init()
-    pygame.mixer.music.load("Assets/music.mp3")
-    pygame.mixer.music.play(-1)
 
+    #Pantalla de inicio
     if nivel == -1:
         ventana.blit(fondo, [0,0])
         draw_text(ventana, "Tza tun tzat", 65, WIDTH // 2, HEIGHT // 4)
@@ -280,14 +296,16 @@ while not gameOver:
                     waiting = False
 
 
-    #Pantalla de game over
+    #Fin de juego y carga la pantalla final
     if fin == True:
         PantallaFinal(scoreFinal)
 
+    #Ubica al personaje al inicio de cada nivel
     if posnormal== 0:
         movimiento = pygame.Rect(90,550,10,10)
         posnormal=1
 
+    #Eventos ya sea de precionar teclas o boton de quit
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             gameOver=True
@@ -311,19 +329,20 @@ while not gameOver:
     per.rect.x = movimiento.x
     per.rect.y = movimiento.y
 
-
+    #Primer nivel
     if nivel == 0:
 
+        #Toma el array que se le indica y empieza a diferencia entre muro o piso
         listaMuros = construir_mapa(mapa)
 
 
-        #colision con los muros
+        #Colision con los muros
         for muro in listaMuros:
             if movimiento.colliderect(muro):
                 movimiento.x -= vel
                 movimiento.y -= alt
 
-        #dibujo
+        #Dibujo
         x=0
         y=0
         for fila in mapa:
@@ -344,13 +363,12 @@ while not gameOver:
 
         listaPer.draw(ventana)
 
-
+        #Si pasa tal punto cambia el nivel y en la vuelta del bucle posiciona al personaje
         if per.rect.x > 748 and nivel == 0:
             nivel=1
             posnormal=0
 
-    #aqui es cuando pasara de nivel en nivel
-    
+    #Segundo Nivel
     if nivel == 1:
 
         listaMuros = construir_mapa(mapa1)
@@ -390,8 +408,7 @@ while not gameOver:
             posnormal=0
         
 
-
-
+    #Tercer nivel
     if nivel == 2:
     
         listaMuros = construir_mapa(mapa2)
@@ -432,9 +449,9 @@ while not gameOver:
             #posnormal=0
 
 
-
+    #Muestra el score en tiempo real
     draw_text(ventana, "score: " + str(score), 25, WIDTH * 3.5/4, 10)
-    #dibujar_mapa(ventana, listaMuros)
+
     pygame.display.flip()
 
 pygame.quit()
