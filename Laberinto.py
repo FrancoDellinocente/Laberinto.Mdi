@@ -48,20 +48,21 @@ def draw_text(surface, text, size, x, y):
 	text_rect.midtop = (x, y)
 	surface.blit(text_surface, text_rect)
 
-
-def PantallaFinal():
-	ventana.fill(BLACK)
-	draw_text(ventana, "GAME OVER", 65, WIDTH // 2, HEIGHT // 4)
-	draw_text(ventana, "Presiona cualquier tecla para salir", 17, WIDTH // 2, HEIGHT * 3/4)
-	pygame.display.flip()
-	waiting = True
-	while waiting:
-		reloj.tick(60)
-		for event in pygame.event.get():
-			if event.type == pygame.KEYDOWN:
-				pygame.quit()
-			if event.type == pygame.KEYUP:
-				waiting = False
+def PantallaFinal(puntuacion):
+    ventana.fill(BLACK)
+    draw_text(ventana, "GAME OVER", 65, WIDTH // 2, HEIGHT // 4)
+    draw_text(ventana, "Tu puntuacion fue: " + str(puntuacion), 30, WIDTH // 2, HEIGHT // 2)
+    draw_text(ventana, "Presiona cualquier tecla para salir", 17, WIDTH // 2, HEIGHT * 3/4)
+    pygame.display.flip()
+    waiting = True
+    while waiting:
+        reloj.tick(60)
+        for event in pygame.event.get():
+            if event.type == pygame.KEYDOWN:
+                pygame.quit()
+            if event.type == pygame.KEYUP:
+                waiting = False
+ 
 
 
 WIDTH = 748
@@ -95,7 +96,7 @@ per = Per()
 listaPer.add(per)
 
 #Dibujo como va a ser el mapa
-mapa = [
+mapa3 = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
@@ -132,7 +133,7 @@ mapa = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 ]
 
-mapa3 = [
+mapa = [
 "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX",
 "XXXX             X       XX  X    ",
 "XXXX XXXXXXXXXX XX XXXXX XX XX XXX",
@@ -247,6 +248,8 @@ score= 1000000
 nivel= -1
 posnormal=0
 waiting = True
+scoreFinal = 0
+fondo= pygame.image.load("Assets/fondo.png").convert()
 
 #comienza el bucle del juego
 gameOver=False
@@ -264,7 +267,7 @@ while not gameOver:
     pygame.mixer.music.play(-1)
 
     if nivel == -1:
-        ventana.fill(BLACK)
+        ventana.blit(fondo, [0,0])
         draw_text(ventana, "Tza tun tzat", 65, WIDTH // 2, HEIGHT // 4)
         draw_text(ventana, "Juego hecho por Franco Dellinocente", 27, WIDTH // 2, HEIGHT / 2)
         draw_text(ventana, "Presiona cualquier tecla para comenzar", 17, WIDTH // 2, HEIGHT * 3/4)
@@ -279,7 +282,7 @@ while not gameOver:
 
     #Pantalla de game over
     if fin == True:
-        PantallaFinal()
+        PantallaFinal(scoreFinal)
 
     if posnormal== 0:
         movimiento = pygame.Rect(90,550,10,10)
@@ -423,13 +426,14 @@ while not gameOver:
         listaPer.draw(ventana)
 
         if nivel == 2 and per.rect.x < 0:
+            scoreFinal=score
             fin= True
             #nivel=2
             #posnormal=0
 
 
 
-    draw_text(ventana, str(score), 25, WIDTH // 2, 10)
+    draw_text(ventana, "score: " + str(score), 25, WIDTH * 3.5/4, 10)
     #dibujar_mapa(ventana, listaMuros)
     pygame.display.flip()
 
